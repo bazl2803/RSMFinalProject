@@ -1,4 +1,4 @@
-﻿namespace Application.Sales
+﻿namespace Application.Queries
 {
     public sealed record GetSalesQuery(
         string? ProductName,
@@ -6,5 +6,7 @@
         string? TotalGreaterThan,
         string? SalesPerson,
         DateTime? OrderStartDate,
-        DateTime? OrderEndDate);
+        DateTime? OrderEndDate,
+        int PageSize,
+        int? Cursor);
 }

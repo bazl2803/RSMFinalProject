@@ -4,13 +4,17 @@
 
     public class SalesOrderDetail : Entity<int>
     {
-        public int SalesOrderID { get; set; }
-        public string CarrierTrackingNumber { get; set; }
-        public short OrderQty { get; set; }
-        public int ProductID { get; set; }
-        public int SpecialOfferID { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal UnitPriceDiscount { get; set; }
-        public decimal LineTotal { get; set; }
+        // Properties
+        public short OrderQty { get; init; }
+        public decimal UnitPrice { get; init; }
+        public decimal LineTotal { get; init; }
+
+        // Foreign Keys
+        public int SalesOrderID { get; init; }
+        public int ProductID { get; init; }
+
+        // Navigation Properties
+        public SalesOrderHeader? SalesOrderHeader { get; init; }
+        public Product? Product { get; init; }
     }
 }

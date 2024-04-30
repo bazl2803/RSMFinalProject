@@ -1,5 +1,6 @@
-using System.Reflection;
+using Application.Data;
 using Infrastructure;
+using WebApi.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +19,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/GetSales", () => { throw new NotImplementedException(); })
-    .WithName("GetSales")
-    .WithOpenApi();
+app.MapSalesEndpoints();
 
 app.Run();

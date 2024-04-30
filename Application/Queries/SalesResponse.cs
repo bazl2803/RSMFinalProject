@@ -1,4 +1,4 @@
-﻿namespace Application.Sales
+﻿namespace Application.Queries
 {
     public class SalesResponse
     {

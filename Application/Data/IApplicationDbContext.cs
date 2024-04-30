@@ -11,7 +11,6 @@
         public DbSet<SalesPerson> SalesPersons { get; set; }
         public DbSet<ProductSubcategory> ProductSubcategories { get; set; }
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<CountryRegion> CountryRegions { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
