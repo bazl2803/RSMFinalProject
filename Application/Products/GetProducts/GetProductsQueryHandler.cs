@@ -21,9 +21,6 @@
         {
             var query = _context.Products.AsQueryable();
 
-            if (request.name != null)
-                query = query.Where(e => e.Name == request.name);
-
             return await query.ToListAsync(cancellationToken);
         }
     }

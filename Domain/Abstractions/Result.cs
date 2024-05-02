@@ -1,36 +1,65 @@
 ﻿namespace Domain.Abstractions
 {
-    public class Result
+    public class Result<TSuccess, TFailure>
     {
-        private Result(bool isSuccess, Error error)
+        private readonly TSuccess _successValue;
+        private readonly TFailure _failureValue;
+        private readonly bool _isSuccess;
+
+        public Result(TSuccess successValue)
         {
-            if (isSuccess && error != Error.None ||
-                !isSuccess && error == Error.None)
+            _successValue = successValue;
+            _isSuccess = true;
+        }
+
+        public Result(TFailure failureValue)
+        {
+            _failureValue = failureValue;
+            _isSuccess = false;
+        }
+
+        public bool IsSuccess => _isSuccess;
+
+        public TSuccess Value
+        {
+            get
             {
-                throw new ArgumentException("Invalid error", nameof(error));
+                if (!_isSuccess)
+                {
+                    throw new InvalidOperationException("Result is not successful");
+                }
+                return _successValue;
             }
-
-            IsSuccess = isSuccess;
-            Error = error;
         }
 
-        private bool IsSuccess { get; }
-
-        public bool IsFailure
+        public TFailure Error
         {
-            get { return !IsSuccess; }
+            get
+            {
+                if (_isSuccess)
+                {
+                    throw new InvalidOperationException("Result is successful");
+                }
+                return _failureValue;
+            }
         }
 
-        public Error Error { get; }
+        public static Result<TSuccess, TFailure> Ok(TSuccess value) => new Result<TSuccess, TFailure>(value);
+        public static Result<TSuccess, TFailure> Fail(TFailure error) => new Result<TSuccess, TFailure>(error);
 
-        public static Result Success
+        public TResult Match<TResult>(
+            Func<TSuccess, TResult> success,
+            Func<TFailure, TResult> failure)
         {
-            get { return new(true, Error.None); }
-        }
-
-        public static Result Failure(Error error)
-        {
-            return new Result(false, error);
+            if (_isSuccess)
+            {
+                return success(_successValue);
+            }
+            else
+            {
+                return failure(_failureValue);
+            }
         }
     }
+
 }

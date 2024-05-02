@@ -2,6 +2,7 @@
 {
     using Application.Data;
     using Application.Sales.GetSalesSummary;
+    using Domain.Abstractions;
     using MediatR;
     using Microsoft.AspNetCore.Mvc;
 

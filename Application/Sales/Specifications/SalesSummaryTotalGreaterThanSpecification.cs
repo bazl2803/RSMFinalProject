@@ -5,9 +5,9 @@
 
     public class SalesSummaryTotalGreaterThanSpecification : ISalesSpecification
     {
-        private readonly decimal _total;
+        private readonly decimal? _total;
 
-        public SalesSummaryTotalGreaterThanSpecification(decimal total)
+        public SalesSummaryTotalGreaterThanSpecification(decimal? total)
         {
             _total = total;
         }

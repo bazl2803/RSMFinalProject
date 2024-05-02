@@ -5,9 +5,10 @@
     using MediatR;
     using Microsoft.EntityFrameworkCore;
     using Specifications;
+    using Domain.Abstractions;
 
     public sealed class GetSalesSummaryQueryHandler
-        : IRequestHandler<GetSalesSummaryQuery, List<SalesSummaryResponse>>
+        : IRequestHandler<GetSalesSummaryQuery, Result<List<SalesSummaryResponse>, Error>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -16,60 +17,82 @@
             _context = context;
         }
 
-        public async Task<List<SalesSummaryResponse>> Handle(
+        public async Task<Result<List<SalesSummaryResponse>, Error>> Handle(
             GetSalesSummaryQuery request,
             CancellationToken cancellationToken)
         {
-            var query = _context.SalesOrderDetails.AsQueryable();
+            try
+            {
+                var query = _context.SalesOrderDetails.AsQueryable();
 
-            /***
-             * Specifications
-             */
-            var specifications = new List<ISalesSpecification>();
+                /***
+                 * Specifications
+                 */
+                var specifications = new List<ISalesSpecification>();
 
-            // Filter by OrderDate
-            if (request is { OrderStartDate: not null, OrderEndDate: not null })
-                specifications.Add(new SalesSummaryOrderDateSpecification(
-                    request.OrderStartDate.Value,
-                    request.OrderEndDate.Value));
+                // Filter by OrderDate
+                if (request is { OrderStartDate: not null, OrderEndDate: not null })
+                    specifications.Add(new SalesSummaryOrderDateSpecification(
+                        request.OrderStartDate.Value,
+                        request.OrderEndDate.Value));
 
-            // Filter by CategoryName
-            if (request.CategoryId.HasValue)
-                specifications.Add(new SalesSummaryCategorySpecification(request.CategoryId));
+                // Filter by CategoryId
+                if (request.CategoryId.HasValue)
+                    specifications.Add(new SalesSummaryCategorySpecification(request.CategoryId));
 
-            // Aggregate Specifications
-            query = specifications.Aggregate(query,
-                (current, criteria) => current.Where(criteria.GetExpression()));
+                // Filter by ProductId
+                if (request.ProductId.HasValue)
+                    specifications.Add(new SalesSummaryProductSpecification(request.ProductId));
 
-            /*
-             * Cursor pagination
-             */
-            if (request.Cursor != null)
-                query = query.Where(e => e.Id > request.Cursor);
+                // Filter by SalesPersonId
+                if (request.SalesPersonId.HasValue)
+                    specifications.Add(new SalesSummarySalesPersonSpecification(request.SalesPersonId));
 
-            /*
-             * Build Response
-             */
-            var response = await query
-                .Take(request.PageSize)
-                .Select(e => new SalesSummaryResponse
-                (
-                    e.Id,
-                    e.Product.Name,
-                    e.Product.ProductSubcategory.ProductCategory.Name,
-                    e.LineTotal,
-                    string.Join(" ",
-                        e.SalesOrderHeader.SalesPerson.FirstName,
-                        e.SalesOrderHeader.SalesPerson.MiddleName,
-                        e.SalesOrderHeader.SalesPerson.LastName
-                    ).Trim(),
-                    e.SalesOrderHeader.OrderDate,
-                    e.SalesOrderHeader.BillToAddress.AddressLine1,
-                    e.SalesOrderHeader.ShipToAddress.AddressLine1
-                ))
-                .ToListAsync(cancellationToken);
+                // Filter TotalGreaterThan
+                if (request.TotalSale.HasValue)
+                    specifications.Add(new SalesSummaryTotalGreaterThanSpecification(request.TotalSale));
 
-            return response;
+
+                // Aggregate Specifications
+                query = specifications.Aggregate(query,
+                    (current, criteria) => current.Where(criteria.GetExpression()));
+
+                /*
+                 * Cursor pagination
+                 */
+                if (request.Cursor != null)
+                    query = query.Where(e => e.Id > request.Cursor);
+
+                /*
+                 * Build Response
+                 */
+                var response = await query
+                    .Take(request.PageSize)
+                    .Select(e => new SalesSummaryResponse
+                    (
+                        e.Id,
+                        e.Product.Name,
+                        e.Product.ProductSubcategory.ProductCategory.Name,
+                        e.LineTotal,
+                        string.Join(" ",
+                            e.SalesOrderHeader.SalesPerson.FirstName,
+                            e.SalesOrderHeader.SalesPerson.MiddleName,
+                            e.SalesOrderHeader.SalesPerson.LastName
+                        ).Trim(),
+                        e.SalesOrderHeader.OrderDate,
+                        e.SalesOrderHeader.BillToAddress.AddressLine1,
+                        e.SalesOrderHeader.ShipToAddress.AddressLine1
+                    ))
+                    .ToListAsync(cancellationToken);
+
+                return Result<List<SalesSummaryResponse>, Error>
+                    .Ok(response);
+            }
+            catch (Exception e)
+            {
+                return Result<List<SalesSummaryResponse>, Error>
+                    .Fail(new Error("SalesSummary", e.Message));
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Application.Sales.GetSalesSummary
 {
-    using Domain.Entities;
+    using Domain.Abstractions;
     using MediatR;
 
     public sealed record GetSalesSummaryQuery(
@@ -13,5 +13,5 @@
         int PageSize,
         int? Cursor,
         string? SortColumn,
-        string? SortOrder) : IRequest<List<SalesSummaryResponse>>;
+        string? SortOrder) : IRequest<Result<List<SalesSummaryResponse>, Error>>;
 }

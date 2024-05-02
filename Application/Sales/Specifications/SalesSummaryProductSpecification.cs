@@ -5,9 +5,16 @@
 
     public class SalesSummaryProductSpecification : ISalesSpecification
     {
+        private readonly int? _productId;
+
+        public SalesSummaryProductSpecification(int? productId)
+        {
+            _productId = productId;
+        }
+
         public Expression<Func<SalesOrderDetail, bool>> GetExpression()
         {
-            throw new NotImplementedException();
+            return sd => sd.Product.Id == _productId;
         }
     }
 }
