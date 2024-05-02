@@ -1,10 +1,12 @@
-﻿namespace Infrastructure.Persistence
+﻿namespace Persistence
 {
+    using System.Reflection;
     using Application.Data;
     using Domain.Entities;
     using Microsoft.EntityFrameworkCore;
 
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : DbContext(options), IApplicationDbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -21,6 +23,7 @@
         public DbSet<SalesOrderHeader> SalesOrderHeaders { get; set; }
         public DbSet<SalesPerson> SalesPersons { get; set; }
         public DbSet<ProductSubcategory> ProductSubcategories { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Address> Addresses { get; set; }
     }
 }

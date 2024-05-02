@@ -1,21 +1,26 @@
-﻿namespace Infrastructure
+﻿namespace Persistence
 {
     using Application.Data;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Persistence;
 
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(
+        public static IServiceCollection AddPersistence(
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            var connectionString = configuration.GetConnectionString("Database")!;
 
-            services.AddTransient<IApplicationDbContext, ApplicationDbContext>();
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString,
+                    opt => opt.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
+            });
+
+            services.AddScoped<IApplicationDbContext>(sp =>
+                sp.GetRequiredService<ApplicationDbContext>());
 
             return services;
         }

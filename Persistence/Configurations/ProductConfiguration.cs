@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Configurations
+﻿namespace Persistence.Configurations
 {
     using Domain.Entities;
     using Microsoft.EntityFrameworkCore;
@@ -15,9 +15,15 @@
             builder.Property(e => e.Name);
             builder.Property(e => e.ListPrice);
 
-            builder.HasOne(e => e.ProductSubcategory)
+            builder
+                .HasOne(e => e.ProductSubcategory)
                 .WithMany(e => e.Products)
-                .HasForeignKey("ProductSubcategoryID");
+                .HasForeignKey(e => e.ProductSubcategoryID);
+
+            builder
+                .HasMany(e => e.SalesOrderDetails)
+                .WithOne(e => e.Product)
+                .HasForeignKey(e => e.ProductID);
         }
     }
 }

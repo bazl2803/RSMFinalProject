@@ -2,7 +2,7 @@
 {
     using Abstractions;
 
-    public class SalesOrderHeader : Entity<int>
+    public class SalesOrderHeader : Entity
     {
         // Properties
         public DateTime OrderDate { get; init; }
@@ -14,8 +14,8 @@
         public int? ShipToAddressID { get; init; }
 
         // Navigation Properties
-        public Address? BillAddress { get; init; }
-        public Address? ShipAddress { get; init; }
+        public Address? BillToAddress { get; init; }
+        public Address? ShipToAddress { get; init; }
         public SalesPerson? SalesPerson { get; init; }
         public IEnumerable<SalesOrderDetail> SalesOrderDetails { get; } = new List<SalesOrderDetail>();
     }

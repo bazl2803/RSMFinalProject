@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Configurations
+﻿namespace Persistence.Configurations
 {
     using Domain.Entities;
     using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,11 @@
             builder.Property(e => e.FirstName);
             builder.Property(e => e.MiddleName);
             builder.Property(e => e.LastName);
+
+            builder
+                .HasMany(e => e.SalesOrderHeaders)
+                .WithOne(e => e.SalesPerson)
+                .HasForeignKey(e => e.SalesPersonID);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Configurations
+﻿namespace Persistence.Configurations
 {
     using Domain.Entities;
     using Microsoft.EntityFrameworkCore;
@@ -16,13 +16,15 @@
             builder.Property(e => e.OrderQty);
             builder.Property(e => e.LineTotal);
 
-            builder.HasOne(e => e.SalesOrderHeader)
+            builder
+                .HasOne(e => e.SalesOrderHeader)
                 .WithMany(e => e.SalesOrderDetails)
-                .HasForeignKey("SalesOrderID");
+                .HasForeignKey(e => e.SalesOrderID);
 
-            builder.HasOne(e => e.Product)
+            builder
+                .HasOne(e => e.Product)
                 .WithMany(e => e.SalesOrderDetails)
-                .HasForeignKey("ProductID");
+                .HasForeignKey(e => e.ProductID);
         }
     }
 }

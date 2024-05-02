@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Configurations
+﻿namespace Persistence.Configurations
 {
     using Domain.Entities;
     using Microsoft.EntityFrameworkCore;
@@ -14,21 +14,22 @@
             builder.Property(e => e.Id).HasColumnName("SalesOrderID");
             builder.Property(e => e.OrderDate);
 
-            builder.HasMany(e => e.SalesOrderDetails)
-                .WithOne()
-                .HasForeignKey(detail => detail.SalesOrderID);
+            builder
+                .HasMany(e => e.SalesOrderDetails)
+                .WithOne(e => e.SalesOrderHeader)
+                .HasForeignKey(e => e.SalesOrderID);
 
-            builder.HasOne(e => e.BillAddress)
-                .WithMany(e => e.BillingSalesOrderHeaders)
-                .HasForeignKey("BillToAddressID");
+            builder.HasOne(e => e.BillToAddress)
+                .WithMany(e => e.BillToSalesOrderHeaders)
+                .HasForeignKey(e => e.BillToAddressID);
 
-            builder.HasOne(e => e.ShipAddress)
-                .WithMany(e => e.ShippingSalesOrderHeaders)
-                .HasForeignKey("ShipToAddressID");
+            builder.HasOne(e => e.ShipToAddress)
+                .WithMany(e => e.ShipToSalesOrderHeaders)
+                .HasForeignKey(e => e.BillToAddressID);
 
             builder.HasOne(e => e.SalesPerson)
                 .WithMany(e => e.SalesOrderHeaders)
-                .HasForeignKey("SalesPersonID");
+                .HasForeignKey(e => e.SalesPersonID);
         }
     }
 }

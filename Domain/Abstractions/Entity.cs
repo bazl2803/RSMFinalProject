@@ -1,8 +1,8 @@
 ﻿namespace Domain.Abstractions
 {
-    public abstract class Entity<TId>
+    public abstract class Entity
     {
-        public required TId Id { get; init; }
+        public int Id { get; init; }
         public DateTime ModifiedDate { get; private set; } = DateTime.Now;
     }
 }

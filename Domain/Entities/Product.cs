@@ -2,9 +2,10 @@
 {
     using Abstractions;
 
-    public class Product : Entity<int>
+    public class Product : Entity
     {
-        public string Name { get; init; } = string.Empty;
+        // Properties
+        public string Name { get; init; }
         public decimal ListPrice { get; init; }
         public int? ProductSubcategoryID { get; init; }
 

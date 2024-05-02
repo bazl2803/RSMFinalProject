@@ -2,7 +2,7 @@
 {
     using Abstractions;
 
-    public class SalesOrderDetail : Entity<int>
+    public class SalesOrderDetail : Entity
     {
         // Properties
         public short OrderQty { get; init; }
@@ -14,7 +14,7 @@
         public int ProductID { get; init; }
 
         // Navigation Properties
-        public SalesOrderHeader? SalesOrderHeader { get; init; }
-        public Product? Product { get; init; }
+        public SalesOrderHeader SalesOrderHeader { get; init; }
+        public Product Product { get; init; }
     }
 }

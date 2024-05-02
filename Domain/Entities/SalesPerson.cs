@@ -2,7 +2,7 @@
 {
     using Abstractions;
 
-    public class SalesPerson : Entity<int>
+    public class SalesPerson : Entity
     {
         // Properties
         public string FirstName { get; init; } = string.Empty;

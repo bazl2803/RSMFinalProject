@@ -1,5 +1,4 @@
-using Application.Data;
-using Infrastructure;
+using Persistence;
 using WebApi.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddPersistence(builder.Configuration);
 
 var app = builder.Build();
 
@@ -19,6 +18,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapSalesEndpoints();
+app.MapSaleEndpoints();
 
 app.Run();
