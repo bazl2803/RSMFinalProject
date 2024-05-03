@@ -6,13 +6,12 @@
     using MediatR;
     using Microsoft.AspNetCore.Mvc;
 
-    public static class SaleEndpoints
+    public static class SalesSummaryEndpoints
     {
         public static void MapSaleEndpoints(
             this IEndpointRouteBuilder app)
         {
             app.MapGet("/GetSalesReport", async (
-                IApplicationDbContext context,
                 [FromQuery] int? ProductId,
                 [FromQuery] int? categoryId,
                 [FromQuery] decimal? totalSale,
@@ -23,7 +22,7 @@
                 [FromQuery] int? cursor,
                 [FromQuery] string? sortColumn,
                 [FromQuery] string? sortOrder,
-                ISender sender) =>
+                [FromServices] ISender sender) =>
             {
                 // Populate Query
                 var query = new GetSalesSummaryQuery(
@@ -41,7 +40,7 @@
                 var response = await sender.Send(query);
 
                 return Results.Ok(response);
-            }).WithName("GetSalesReport").WithOpenApi();
+            }).WithName("GetSalesReport").WithOpenApi().RequireAuthorization();
         }
     }
 }

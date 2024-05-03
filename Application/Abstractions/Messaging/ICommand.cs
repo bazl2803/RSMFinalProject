@@ -1,4 +1,7 @@
 ﻿namespace Application.Abstractions.Messaging
 {
-    public interface IResquest<TResult>;
+    public interface ICommand
+    {
+        
+    }
 }
