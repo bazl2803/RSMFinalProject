@@ -1,21 +1,27 @@
-﻿namespace WebApi.Endpoints
+﻿namespace Presentation.SalesSummary
 {
-    using Application.Data;
+    using Application.Sales.GetRegionalSalesSummary;
     using Application.Sales.GetSalesSummary;
-    using Domain.Abstractions;
+    using Carter;
+    using Carter.OpenApi;
+    using Mapster;
     using MediatR;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Routing;
 
-    public static class SalesSummaryEndpoints
+    public class SalesSummaryEndpoints : CarterModule
     {
-        public static void MapSaleEndpoints(
-            this IEndpointRouteBuilder app)
+        public override void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/GetSalesReport", async (
+            var group = app.MapGroup("/api/SalesSummary");
+
+            group.MapGet("/GetSalesSummary", async (
                 [FromQuery] int? ProductId,
                 [FromQuery] int? categoryId,
-                [FromQuery] decimal? totalSale,
                 [FromQuery] int? salesPerson,
+                [FromQuery] decimal? totalSale,
                 [FromQuery] DateTime? OrderStartDate,
                 [FromQuery] DateTime? OrderEndDate,
                 [FromQuery] int pageSize,
@@ -24,23 +30,39 @@
                 [FromQuery] string? sortOrder,
                 [FromServices] ISender sender) =>
             {
-                // Populate Query
                 var query = new GetSalesSummaryQuery(
                     ProductId,
                     categoryId,
                     salesPerson,
                     totalSale,
-                    OrderEndDate,
+                    OrderStartDate,
                     OrderEndDate,
                     pageSize,
                     cursor,
                     sortColumn,
-                    sortOrder);
+                    sortOrder
+                );
 
-                var response = await sender.Send(query);
+                var result = await sender.Send(query);
+                return result.IsSuccess
+                    ? Results.Ok(result.Value)
+                    : Results.NoContent();
+            }).WithName("GetSalesSummary")
+                .WithTags("SalesSummary")
+                .IncludeInOpenApi()
+                .RequireAuthorization();
 
-                return Results.Ok(response);
-            }).WithName("GetSalesReport").WithOpenApi().RequireAuthorization();
+            group.MapGet("/RegionalSalesSummary", async ([FromServices] ISender sender) =>
+                {
+                    var query = new GetRegionalSalesSummaryQuery();
+                    var result = await sender.Send(query);
+                    return result.IsSuccess
+                        ? TypedResults.Ok(result.Value)
+                        : Results.NoContent();
+                }).WithName("GetRegionalSalesSummary")
+                .WithTags("SalesSummary")
+                .IncludeInOpenApi()
+                .RequireAuthorization();
         }
     }
 }

@@ -2,23 +2,25 @@
 {
     using Data;
     using Domain.Entities;
-    using MediatR;
     using Microsoft.EntityFrameworkCore;
+    using Abstractions.Messaging;
+    using Domain.Abstractions;
+    using Domain.Repositories;
 
     public sealed class
-        GetProductCategoriesQueryHandler : IRequestHandler<GetProductCategoriesQuery, List<ProductCategory>>
+        GetProductCategoriesQueryHandler : IQueryHandler<GetProductCategoriesQuery, List<ProductCategory>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IProductCategoryRepository _repository;
 
-        public GetProductCategoriesQueryHandler(IApplicationDbContext context)
+        public GetProductCategoriesQueryHandler(IProductCategoryRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
-        public Task<List<ProductCategory>> Handle(GetProductCategoriesQuery request,
+        public async Task<Result<List<ProductCategory>>> Handle(GetProductCategoriesQuery request,
             CancellationToken cancellationToken)
         {
-            return _context.ProductCategories.ToListAsync(cancellationToken);
+            return await _repository.GetAllAsync();
         }
     }
 }

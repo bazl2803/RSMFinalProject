@@ -1,7 +1,7 @@
 ﻿namespace Application.Abstractions.Messaging
 {
-    public interface IQuery
-    {
-        
-    }
+    using Domain.Abstractions;
+    using MediatR;
+
+    public interface IQuery<TResponse> : IRequest<Result<TResponse>>;
 }

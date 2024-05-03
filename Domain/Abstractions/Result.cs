@@ -1,65 +1,41 @@
 ﻿namespace Domain.Abstractions
 {
-    public class Result<TSuccess, TFailure>
+    public class Result
     {
-        private readonly TSuccess _successValue;
-        private readonly TFailure _failureValue;
-        private readonly bool _isSuccess;
-
-        public Result(TSuccess successValue)
+        protected internal Result(bool isSuccess, Error error)
         {
-            _successValue = successValue;
-            _isSuccess = true;
-        }
-
-        public Result(TFailure failureValue)
-        {
-            _failureValue = failureValue;
-            _isSuccess = false;
-        }
-
-        public bool IsSuccess => _isSuccess;
-
-        public TSuccess Value
-        {
-            get
+            if (isSuccess && error != Error.None)
             {
-                if (!_isSuccess)
-                {
-                    throw new InvalidOperationException("Result is not successful");
-                }
-                return _successValue;
+                throw new InvalidOperationException();
             }
+
+            if (!isSuccess && error == Error.None)
+            {
+                throw new InvalidOperationException();
+            }
+
+            IsSuccess = isSuccess;
+            Error = error;
         }
 
-        public TFailure Error
-        {
-            get
-            {
-                if (_isSuccess)
-                {
-                    throw new InvalidOperationException("Result is successful");
-                }
-                return _failureValue;
-            }
-        }
+        public bool IsSuccess { get; }
 
-        public static Result<TSuccess, TFailure> Ok(TSuccess value) => new Result<TSuccess, TFailure>(value);
-        public static Result<TSuccess, TFailure> Fail(TFailure error) => new Result<TSuccess, TFailure>(error);
+        public bool IsFailure => !IsSuccess;
 
-        public TResult Match<TResult>(
-            Func<TSuccess, TResult> success,
-            Func<TFailure, TResult> failure)
-        {
-            if (_isSuccess)
-            {
-                return success(_successValue);
-            }
-            else
-            {
-                return failure(_failureValue);
-            }
-        }
+        public Error Error { get; }
+
+        public static Result Success() => new(true, Error.None);
+
+        public static Result<TValue> Success<TValue>(TValue value) =>
+            new(value, true, Error.None);
+
+        public static Result Failure(Error error) =>
+            new(false, error);
+
+        public static Result<TValue> Failure<TValue>(Error error) =>
+            new(default, false, error);
+
+        public static Result<TValue> Create<TValue>(TValue? value) =>
+            value is not null ? Success(value) : Failure<TValue>(Error.None);
     }
-
 }

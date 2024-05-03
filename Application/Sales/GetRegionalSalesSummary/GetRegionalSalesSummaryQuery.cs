@@ -1,4 +1,8 @@
 ﻿namespace Application.Sales.GetRegionalSalesSummary
 {
-    public record GetRegionalSalesSummaryQuery();
+    using Abstractions.Messaging;
+    using MediatR;
+
+    public sealed record GetRegionalSalesSummaryQuery
+        : IQuery<List<RegionalSalesSummaryResponse>>;
 }

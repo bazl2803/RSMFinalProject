@@ -1,22 +1,26 @@
 ﻿namespace Application.SalesPersons.GetSalesPersons
 {
+    using Abstractions.Messaging;
     using Data;
+    using Domain.Abstractions;
     using Domain.Entities;
-    using MediatR;
+    using Domain.Repositories;
     using Microsoft.EntityFrameworkCore;
 
-    public sealed class GetSalesPersonsQueryHandler : IRequestHandler<GetSalesPersonsQuery, List<SalesPerson>>
+    public sealed class GetSalesPersonsQueryHandler : IQueryHandler<GetSalesPersonsQuery, List<SalesPerson>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISalesPersonRepository _repository;
 
-        public GetSalesPersonsQueryHandler(IApplicationDbContext context)
+        public GetSalesPersonsQueryHandler(ISalesPersonRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
-        public Task<List<SalesPerson>> Handle(GetSalesPersonsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<SalesPerson>>> Handle(
+            GetSalesPersonsQuery request,
+            CancellationToken cancellationToken)
         {
-            return _context.SalesPersons.ToListAsync(cancellationToken);
+            return await _repository.GetAllAsync();
         }
     }
 }

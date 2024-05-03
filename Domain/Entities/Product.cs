@@ -5,7 +5,7 @@
     public class Product : Entity
     {
         // Properties
-        public string Name { get; init; }
+        public string Name { get; init; } = string.Empty;
         public decimal ListPrice { get; init; }
         public int? ProductSubcategoryID { get; init; }
 

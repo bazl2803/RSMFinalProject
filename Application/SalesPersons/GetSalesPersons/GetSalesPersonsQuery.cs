@@ -1,7 +1,7 @@
 ﻿namespace Application.SalesPersons.GetSalesPersons
 {
+    using Abstractions.Messaging;
     using Domain.Entities;
-    using MediatR;
 
-    public record GetSalesPersonsQuery : IRequest<SalesPerson>, IRequest<List<SalesPerson>>;
+    public record GetSalesPersonsQuery : IQuery<List<SalesPerson>>;
 }

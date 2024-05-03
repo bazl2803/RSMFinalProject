@@ -28,6 +28,9 @@
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
             };
+
+            options.RequireHttpsMetadata = false;
+            
         }
     }
 }

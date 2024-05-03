@@ -8,7 +8,7 @@
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
 
-    public class JwtProvider : IJwtProvider
+    public sealed class JwtProvider : IJwtProvider
     {
         //private readonly IConfiguration _configuration;
         private readonly JwtOptions _options;

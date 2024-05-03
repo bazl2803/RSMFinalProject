@@ -19,8 +19,14 @@
             {
                 var query = new GetProductCategoriesQuery();
                 var result = await sender.Send(query);
-                return Results.Ok(result);
-            }).WithName("GetProductsCategories").IncludeInOpenApi().RequireAuthorization();
+                return result.IsSuccess
+                    ? TypedResults.Ok(result.Value)
+                    : Results.NoContent();
+            })
+                .WithName("GetProductsCategories")
+                .WithTags("ProductCategory")
+                .IncludeInOpenApi()
+                .RequireAuthorization();
         }
     }
 }

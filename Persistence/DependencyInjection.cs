@@ -1,9 +1,11 @@
 ﻿namespace Persistence
 {
     using Application.Data;
+    using Domain.Repositories;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Repositories;
 
     public static class DependencyInjection
     {
@@ -21,6 +23,11 @@
 
             services.AddScoped<IApplicationDbContext>(sp =>
                 sp.GetRequiredService<ApplicationDbContext>());
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<ISalesPersonRepository, SalesPersonRepository>();
 
             return services;
         }

@@ -1,7 +1,6 @@
 ﻿namespace Presentation.Authentication
 {
-    public class AuthenticationRequest
-    {
-        
-    }
+    using Microsoft.AspNetCore.Mvc;
+
+    public record AuthenticationRequest(string Username, string Password);
 }

@@ -1,7 +1,7 @@
 ﻿namespace Application.ProductCategories.GetProductCategories
 {
+    using Abstractions.Messaging;
     using Domain.Entities;
-    using MediatR;
 
-    public record GetProductCategoriesQuery : IRequest<List<ProductCategory>>;
+    public record GetProductCategoriesQuery : IQuery<List<ProductCategory>>;
 }

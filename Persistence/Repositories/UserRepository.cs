@@ -5,16 +5,11 @@
 
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users;
-
-        public UserRepository()
-        {
-            _users = new List<User>();
-        }
+        private static readonly List<User> _users = new();
 
         public User GetUserByUsername(string username)
         {
-            var user = _users.FirstOrDefault(u => u.Username == username);
+            var user = _users.Where(u => u.Username == username).FirstOrDefault();
             if (user is null) throw new Exception("User not found");
             return user;
         }
