@@ -14,8 +14,8 @@
         public async Task<Result<List<RegionalSalesSummaryResponse>>> Handle(GetRegionalSalesSummaryQuery request,
             CancellationToken cancellationToken)
         {
-            const string sql = @"
-            WITH ProductData AS (
+            const string sql =
+                @"WITH ProductData AS (
               SELECT sod.SalesOrderDetailID,
                      p.Name AS ProductName,
                      pc.Name AS Category,
@@ -59,11 +59,9 @@
                      CAST((SUM(TotalSales) OVER (PARTITION BY sd.ProductCategory, sd.TerritoryID) * 100.0) / SUM(TotalSales) OVER (PARTITION BY sd.TerritoryID) AS FLOAT) AS PercentageOfTotalCategorySalesInRegion
               FROM SummaryData sd
             )
-            -- Main Query --
             SELECT ProductName, TotalSales, PercentageOfTotalSalesInRegion, PercentageOfTotalCategorySalesInRegion
             FROM CalculatedData
-            WHERE Quarter = LastQuarter;
-            ";
+            WHERE Quarter = LastQuarter";
 
             await using var connection = new SqlConnection("Database");
             var result = connection.Query<RegionalSalesSummaryResponse>(sql).ToList();
